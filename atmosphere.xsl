@@ -12,9 +12,14 @@
             <h2><xsl:value-of select="substring(@timestamp, 12, 2)" />H </h2>           
 
             <!-- Pluie -->
-            <xsl:if test="pluie &gt; 0">
-                <p class="symbol">🌧️</p>
-            </xsl:if>           
+            <xsl:choose>
+                <xsl:when test="pluie &gt; 0">
+                    <p class="symbol">🌧️</p>
+                </xsl:when>
+                <xsl:otherwise>
+                    <p class="symbol">☀️</p>
+                </xsl:otherwise>
+            </xsl:choose>           
 
             <!-- Vent-->
             <xsl:variable name="vent" select="vent_moyen/level[@val='10m']"/>
