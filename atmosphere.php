@@ -1,8 +1,9 @@
 <?php
-require_once 'src/localisation.php';
-require_once 'src/meteo.php';
-require_once 'src/map.php';
-require_once 'src/air.php';
+require_once __DIR__ . '/src/cache.php';
+require_once __DIR__ . '/src/localisation.php';
+require_once __DIR__ . '/src/map.php';
+require_once __DIR__ . '/src/meteo.php';
+require_once __DIR__ . '/src/air.php';
 
 echo <<<HTML
 <!DOCTYPE html>

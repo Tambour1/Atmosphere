@@ -27,7 +27,6 @@ header p {
     margin-top: 0;
 }
 
-/* Main Content */
 main {
     padding: 2rem;
 }
@@ -37,7 +36,6 @@ main {
     box-shadow: none;
 }
 
-/* Météo Section */
 .meteo {
     background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
     border : 1px solid whitesmoke;
@@ -72,7 +70,6 @@ main {
     color: #2e7d32;    
 }
 
-/* Air Quality Section */
 .air {
     width: 20%;
     background-color: #6bace2;
@@ -115,7 +112,6 @@ main {
     color:#2e7d32;
 }
 
-/* Map Section */
 .map {
     text-align: center;
     background-color: whitesmoke;
@@ -133,9 +129,6 @@ main {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-
-
-/* Footer */
 footer {
     text-align: center;
     padding: 1rem;
@@ -145,8 +138,6 @@ footer {
     margin-top: 2rem;
     border-top: 3px solid #315b85;
 }
-
-/* Responsive */
 
 @media screen and (max-width: 1400px) {
     .infos {
@@ -174,7 +165,7 @@ footer {
 @media screen and (max-width: 1000px) {
 
     .meteo {
-        height: auto; /* Ajuste automatiquement la hauteur en fonction du contenu */
+        height: auto;
     }
     
     .meteo-data {

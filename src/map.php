@@ -1,5 +1,4 @@
 <?php
-require_once 'cache.php';
 
 /**
  * Récupère les données de circulation du Grand Nancy
@@ -58,16 +57,10 @@ JS;
  * @return SimpleXMLElement|null
  */
 function getStan() {
-    $opts = [
-        "http" => [
-            "header" => "User-Agent: test/1.0 (test@gmail.com)"
-        ]
-    ];
-    $context = stream_context_create($opts);
     $cacheFile = __DIR__ . '/../cache/stan.xml';
     global $stan_url;
     $stan_url = "https://nominatim.openstreetmap.org/search?q=Place%20Stanislas&format=xml";
-    $stanData = get_cached_data($cacheFile, $stan_url, 3600, $context);
+    $stanData = get_cached_data($cacheFile, $stan_url, 3600);
     return $stanData ? simplexml_load_string($stanData) : null;
 }
 
