@@ -1,40 +1,59 @@
 <?php
-require_once 'cache.php';
+require_once __DIR__ . '/cache.php';
 
 /**
  * Récupère la localisation de l'utilisateur
  * @param string $ip Adresse IP de l'utilisateur
  * @return SimpleXMLElement|null
  */
-function getLocalisation($ip) {
-    $opts = array('http' => array('proxy'=> 'tcp://127.0.0.1:8080', 'request_fulluri'=> true), 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false));
-    $context = stream_context_create($opts);
+function getLocalisation($ip) {    
     $cacheFile = __DIR__ . '/../cache/localisation.xml';
     global $ip_url;
-    $ip_url = "http://ip-api.com/xml/$ip";
-    $localisationData = get_cached_data($cacheFile, $ip_url, 3600, $context);
-    return $localisationData ? simplexml_load_string($localisationData) : null;
+    $apiKey = "41d15e5d79cf461fbbab930237377c7a"; // clé d'api à ne pas mettre en clair normalement
+    $ip_url = 'https://api.ipgeolocation.io/ipgeo?apiKey=' . $apiKey . '&ip=' . $ip;
+    $localisationData = get_cached_data($cacheFile, $ip_url, 3600);
+    return $localisationData ? json_decode($localisationData) : null;
 }
 
-$client_ip = $_SERVER['REMOTE_ADDR'];
+/**
+ * Récupère la localisation de l'IUT Charlemagne
+ * @return SimpleXMLElement|null
+ */
+function getCharlemagne() {
+    $cacheFile = __DIR__ . '/../cache/charlemagne.xml';
+    $charlemagne_url = "https://nominatim.openstreetmap.org/search?q=Iut%20Charlemagne&format=xml";
+    $charlemagneData = get_cached_data($cacheFile, $charlemagne_url, 3600);
+    return $charlemagneData ? simplexml_load_string($charlemagneData) : null;
+}
+
+$client_ip = getIpAddress();
+// $client_ip = "83.196.78.74";
 
 $localisation = getLocalisation($client_ip);
+$charlemagne = getCharlemagne();
 
-if ($localisation->status == 'success' && $localisation->city == 'Nancy') {
-    $latitude = $localisation->lat;
-    $longitude = $localisation->lon;
+if ($localisation->city == "Nancy") {
+    $latitude = $localisation->latitude;
+    $longitude = $localisation->longitude;
     $lieu = $localisation->city;
-} else { // recupération par défaut des coordonnées de l'IUT Charlemagne
-    $opts = [
-        "http" => [
-            "header" => "User-Agent: test/1.0 (test@gmail.com)"
-        ]
-    ];
-    $context = stream_context_create($opts);
-    $charlemagne_url = "https://nominatim.openstreetmap.org/search?q=Iut%20Charlemagne&format=xml";
-    $charlemagneData = file_get_contents($charlemagne_url, false, $context);
-    $charlemagne = simplexml_load_string($charlemagneData);
+} else {
     $latitude = $charlemagne->place[0]->attributes()->lat;
     $longitude = $charlemagne->place[0]->attributes()->lon;
     $lieu = "IUT Charlemagne";
+}
+
+function getIpAddress()
+{
+    // IPv6
+    if (!empty($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    // IPv4
+    if (!empty($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    // Si aucune adresse n'est disponible
+    return 'Aucune adresse IP disponible';
 }

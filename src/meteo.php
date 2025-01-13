@@ -1,5 +1,4 @@
 <?php
-require_once 'cache.php';
 
 /**
  * Récupère les données météo

@@ -1,5 +1,4 @@
 <?php
-require_once 'cache.php';
 
 /**
  * Récupération des données de la qualité de l'air
