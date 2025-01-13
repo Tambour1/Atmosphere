@@ -35,7 +35,7 @@ if (getenv('ISLOCAL') == 'true') {
 $localisation = getLocalisation($client_ip);
 $charlemagne = getCharlemagne();
 
-if ($localisation->city == "Nancy") {
+if ($localisation && isset($localisation->city) && $localisation->city == "Nancy") {
     $latitude = $localisation->latitude;
     $longitude = $localisation->longitude;
     $lieu = $localisation->city;
