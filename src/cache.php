@@ -9,8 +9,16 @@
  * @return string|false
  */
 function get_cached_data($cache_file, $url, $expiry_time = 600) {
-    $opts = array('http' => array('proxy'=> 'tcp://www-cache:3128', 'request_fulluri'=> true,"header" => "User-Agent: test/1.0 (test@gmail.com)"), 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false));
+
+    // Crée le contexte selon l'environnement
+    if (getenv('ISLOCAL') == 'true') {
+        $opts = array('http' => array('header' => "User-Agent: test/1.0 (test@gmail.com)"));
+    } else {
+        $opts = array('http' => array('proxy'=> 'tcp://www-cache:3128', 'request_fulluri'=> true,"header" => "User-Agent: test/1.0 (test@gmail.com)"), 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false));
+    }
+       
     $context = stream_context_create($opts);
+
     // Vérifie si le fichier de cache existe et n'est pas expiré
     if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $expiry_time) {
         return file_get_contents($cache_file);

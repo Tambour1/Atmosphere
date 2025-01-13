@@ -9,7 +9,7 @@ require_once __DIR__ . '/cache.php';
 function getLocalisation($ip) {    
     $cacheFile = __DIR__ . '/../cache/localisation.xml';
     global $ip_url;
-    $apiKey = "41d15e5d79cf461fbbab930237377c7a"; // clé d'api à ne pas mettre en clair normalement
+    $apiKey = getenv('APIKEY') ?: "41d15e5d79cf461fbbab930237377c7a"; // clé d'api à ne pas mettre en clair normalement
     $ip_url = 'https://api.ipgeolocation.io/ipgeo?apiKey=' . $apiKey . '&ip=' . $ip;
     $localisationData = get_cached_data($cacheFile, $ip_url, 3600);
     return $localisationData ? json_decode($localisationData) : null;
@@ -26,8 +26,11 @@ function getCharlemagne() {
     return $charlemagneData ? simplexml_load_string($charlemagneData) : null;
 }
 
-$client_ip = getIpAddress();
-// $client_ip = "83.196.78.74";
+if (getenv('ISLOCAL') == 'true') {
+    $client_ip = "83.196.78.74"; // ip public de test NANCY
+} else {
+    $client_ip = getIpAddress();
+}
 
 $localisation = getLocalisation($client_ip);
 $charlemagne = getCharlemagne();
