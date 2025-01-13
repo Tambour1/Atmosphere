@@ -8,18 +8,15 @@
  * @param resource $context Le contexte de la requête
  * @return string|false
  */
-function get_cached_data($cache_file, $url, $expiry_time = 600, $context = null) {
+function get_cached_data($cache_file, $url, $expiry_time = 600) {
+    $opts = array('http' => array('proxy'=> 'tcp://www-cache:3128', 'request_fulluri'=> true,"header" => "User-Agent: test/1.0 (test@gmail.com)"), 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false));
+    $context = stream_context_create($opts);
     // Vérifie si le fichier de cache existe et n'est pas expiré
     if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $expiry_time) {
         return file_get_contents($cache_file);
     } else {
         
-        // Si le fichier de cache n'existe pas ou est expiré, recupérer le fichier depuis l'URL
-        if ($context) {
-            $data = file_get_contents($url, false, $context);
-        } else {
-            $data = file_get_contents($url);
-        }
+        $data = file_get_contents($url, false, $context);
 
         // Si la requête réussit, mettre à jour le cache
         if ($data !== false) {
